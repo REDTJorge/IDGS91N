@@ -1,0 +1,123 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <title>Medalert - Visualización con Google Charts</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    body { font-family: Arial, sans-serif; background:#f8f6fb; color:#222; padding:20px; }
+    header { text-align:center; margin-bottom:20px; }
+    .chart-row { display:flex; gap:20px; flex-wrap:wrap; justify-content:center; }
+    .chart-card { background:white; border-radius:12px; box-shadow:0 4px 14px rgba(0,0,0,0.08); padding:16px; width: 48%; min-width:320px; }
+    h2 { font-size:18px; margin:8px 0 12px; color:#6b3f85; }
+    .small { font-size:12px; color:#666; margin-top:8px; }
+    @media (max-width:800px) { .chart-card { width:100%; } }
+  </style>
+  <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+  <script type="text/javascript">
+    // Carga las librerías de Google Charts
+    google.charts.load('current', {'packages':['corechart', 'bar']});
+    google.charts.setOnLoadCallback(drawAllCharts);
+
+    function drawAllCharts() {
+      drawLineAdherence();
+      drawBarMissedDoses();
+      drawPieStatus();
+    }
+
+    // 1) Gráfica de líneas: Adherencia diaria semanal (%)
+    function drawLineAdherence() {
+      var data = google.visualization.arrayToDataTable([
+        ['Día', 'Adherencia (%)'],
+        ['Lun', 85],
+        ['Mar', 92],
+        ['Mié', 78],
+        ['Jue', 88],
+        ['Vie', 90],
+        ['Sáb', 95],
+        ['Dom', 87]
+      ]);
+
+      var options = {
+        title: 'Adherencia diaria (semana)',
+        curveType: 'function',
+        legend: { position: 'bottom' },
+        vAxis: { minValue: 0, maxValue: 100 },
+        height: 320
+      };
+
+      var chart = new google.visualization.LineChart(document.getElementById('line_adherence'));
+      chart.draw(data, options);
+    }
+
+    // 2) Gráfica de barras: Dosis perdidas por paciente (mes)
+    function drawBarMissedDoses() {
+      var data = google.visualization.arrayToDataTable([
+        ['Paciente', 'Dosis perdidas'],
+        ['Paciente A', 3],
+        ['Paciente B', 1],
+        ['Paciente C', 5],
+        ['Paciente D', 0],
+        ['Paciente E', 2]
+      ]);
+
+      var options = {
+        title: 'Dosis perdidas por paciente (último mes)',
+        legend: { position: 'none' },
+        height: 320,
+        bars: 'vertical'
+      };
+
+      var chart = new google.charts.Bar(document.getElementById('bar_missed'));
+      chart.draw(data, google.charts.Bar.convertOptions(options));
+    }
+
+    // 3) Gráfica de pastel: Distribución de pacientes por estado
+    function drawPieStatus() {
+      var data = google.visualization.arrayToDataTable([
+        ['Estado', 'Cantidad'],
+        ['Activo', 12],
+        ['En espera', 4],
+        ['Dado de baja', 2]
+      ]);
+
+      var options = {
+        title: 'Distribución de pacientes por estado',
+        pieHole: 0.35,
+        height: 320
+      };
+
+      var chart = new google.visualization.PieChart(document.getElementById('pie_status'));
+      chart.draw(data, options);
+    }
+
+    // Redibujar gráficos al cambiar tamaño de ventana (responsividad básica)
+    window.addEventListener('resize', drawAllCharts);
+  </script>
+</head>
+<body>
+  <header>
+    <h1>Medalert — Dashboard de visualización (Google Charts)</h1>
+  </header>
+
+  <div class="chart-row">
+    <div class="chart-card">
+      <h2>1. Adherencia diaria (línea)</h2>
+      <div id="line_adherence"></div>
+      <p class="small">Interpretación: muestra la variación de adherencia semanal en porcentaje.</p>
+    </div>
+
+    <div class="chart-card">
+      <h2>2. Dosis perdidas (barras)</h2>
+      <div id="bar_missed"></div>
+      <p class="small">Interpretación: identifica pacientes con mayor número de dosis no administradas.</p>
+    </div>
+
+    <div class="chart-card" style="width:98%">
+      <h2>3. Distribución por estado (pastel)</h2>
+      <div id="pie_status"></div>
+      <p class="small">Interpretación: visibiliza la proporción de pacientes activos vs. en espera o dados de baja.</p>
+    </div>
+  </div>
+</body>
+</html>
